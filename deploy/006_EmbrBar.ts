@@ -5,11 +5,11 @@ export default async function ({ ethers, deployments, getNamedAccounts, network 
   const { deploy } = deployments
   const { deployer, dev, treasury } = await getNamedAccounts()
 
-  const { address, args } = await deploy("BeetsBar", {
+  const { address, args } = await deploy("EmbrBar", {
     from: deployer,
-    args: [process.env.FBEETS_VESTED_TOKEN],
+    args: [process.env.FEMBR_VESTED_TOKEN],
     log: true,
     deterministicDeployment: false,
-    contract: "contracts/BeetsBar.sol:BeetsBar",
+    contract: "contracts/EmbrBar.sol:EmbrBar",
   })
 }

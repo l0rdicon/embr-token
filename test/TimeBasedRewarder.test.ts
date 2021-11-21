@@ -1,4 +1,4 @@
-import { BeethovenxMasterChef, BeethovenxToken, TimeBasedRewarder } from "../types"
+import { EmbrMasterChef, EmbrToken, TimeBasedRewarder } from "../types"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { ethers } from "hardhat"
 import { advanceBlock, advanceToTime, bn, deployChef, deployContract, deployERC20Mock, latest, setAutomineBlocks } from "./utilities"
@@ -6,8 +6,8 @@ import { expect } from "chai"
 import { up } from "inquirer/lib/utils/readline"
 
 describe("TimeBasedRewarder", function () {
-  let beets: BeethovenxToken
-  let chef: BeethovenxMasterChef
+  let embr: EmbrToken
+  let chef: EmbrMasterChef
   let owner: SignerWithAddress
   let dev: SignerWithAddress
   let treasury: SignerWithAddress
@@ -28,12 +28,12 @@ describe("TimeBasedRewarder", function () {
   })
 
   beforeEach(async function () {
-    beets = await deployContract("BeethovenxToken", [])
+    embr = await deployContract("EmbrToken", [])
     const startBlock = 0
-    const beetsPerBlock = bn(6)
+    const embrPerBlock = bn(6)
 
-    chef = await deployChef(beets.address, treasury.address, beetsPerBlock, startBlock)
-    await beets.transferOwnership(chef.address)
+    chef = await deployChef(embr.address, treasury.address, embrPerBlock, startBlock)
+    await embr.transferOwnership(chef.address)
   })
 
   it("sets intial state correctly", async () => {
@@ -356,7 +356,7 @@ describe("TimeBasedRewarder", function () {
     await expect(chef.connect(alice).withdrawAndHarvest(0, bn(100), alice.address)).not.to.be.reverted
   })
 
-  it("only masterchef can call onBeetsReward hook", async () => {
+  it("only masterchef can call onEmbrReward hook", async () => {
     const lpToken = await deployERC20Mock("LPToken", "LPT", bn(10_000))
     const rewardToken = await deployERC20Mock("Token 1", "T1", bn(10_000))
 
@@ -369,8 +369,8 @@ describe("TimeBasedRewarder", function () {
     await lpToken.transfer(alice.address, bn(100))
 
     await lpToken.connect(alice).approve(chef.address, bn(100))
-    //deposit calls onBeetsReward
+    //deposit calls onEmbrReward
     await expect(chef.connect(alice).deposit(0, bn(100), alice.address)).not.to.be.reverted
-    await expect(rewarder.onBeetsReward(0, bob.address, bob.address, 10, bn(100))).to.be.revertedWith("Only MasterChef can call this function.")
+    await expect(rewarder.onEmbrReward(0, bob.address, bob.address, 10, bn(100))).to.be.revertedWith("Only MasterChef can call this function.")
   })
 })

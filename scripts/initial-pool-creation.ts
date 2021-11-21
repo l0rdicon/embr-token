@@ -14,7 +14,7 @@ const intialPools: Record<number, PoolConfig[]> = {
   //opera
   250: [
     {
-      // 80/20 BEETS/USDC
+      // 80/20 EMBR/USDC
       lpAddress: "0x03c6B3f09D2504606936b1A4DeCeFaD204687890",
       allocationPoints: 0,
     },
@@ -28,7 +28,7 @@ const intialPools: Record<number, PoolConfig[]> = {
       lpAddress: "0xd47D2791d3B46f9452709Fa41855a045304D6f9d",
       allocationPoints: 0,
     },
-    // steady beets
+    // steady embr
     {
       lpAddress: "0xd41bF724b6e31311Db582c5388Af6B316e812Fe4",
       allocationPoints: 0,

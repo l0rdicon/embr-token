@@ -1,11 +1,11 @@
-# BeethovenX token
+# Embr token
 
 ## Contracts
 
-### BeethovenxToken
-The token uses OpenZeppelins ERC20 base contract and only adds a maximum supply of 250mio BEETS to it.
+### EmbrToken
+The token uses OpenZeppelins ERC20 base contract and only adds a maximum supply of 250mio EMBR to it.
 
-### BeethovenxMasterChef
+### EmbrMasterChef
 
 
 The contract is based on SUSHI's version with some adjustments:
@@ -15,7 +15,7 @@ The contract is based on SUSHI's version with some adjustments:
  - remove withdraw function (without harvest) => requires the rewardDebt to be an signed int instead of uint which requires a lot of casting and has no real usecase for us
  - no dev emissions, but treasury emissions instead
  - treasury percentage is subtracted from emissions instead of added on top
- - update of emission rate with upper limit of 6 BEETS/block
+ - update of emission rate with upper limit of 6 EMBR/block
  - more require checks in general
 
 ## Tests

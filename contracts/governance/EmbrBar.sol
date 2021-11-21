@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract BeetsBar is ERC20("FreshBeets", "fBEETS") {
+contract EmbrBar is ERC20("CharredEmbr", "cEMBR") {
     using SafeERC20 for IERC20;
 
     IERC20 public vestingToken;
@@ -33,39 +33,39 @@ contract BeetsBar is ERC20("FreshBeets", "fBEETS") {
                 address(this)
             );
 
-            uint256 totalFreshBeets = totalSupply();
+            uint256 totalCharredEmbr = totalSupply();
 
             vestingToken.transferFrom(msg.sender, address(this), _amount);
             uint256 mintAmount;
-            // If no fBeets exists, mint it 1:1 to the amount put in
-            if (totalFreshBeets == 0 || totalLockedTokenSupply == 0) {
+            // If no fEmbr exists, mint it 1:1 to the amount put in
+            if (totalCharredEmbr == 0 || totalLockedTokenSupply == 0) {
                 mintAmount = _amount;
             }
-            // Calculate and mint the amount of fBeets the blp is worth. The ratio will change overtime
+            // Calculate and mint the amount of fEmbr the blp is worth. The ratio will change overtime
             else {
-                uint256 shareOfFreshBeets = (_amount * totalFreshBeets) /
+                uint256 shareOfCharredEmbr = (_amount * totalCharredEmbr) /
                     totalLockedTokenSupply;
 
-                mintAmount = shareOfFreshBeets;
+                mintAmount = shareOfCharredEmbr;
             }
             _mint(msg.sender, mintAmount);
             emit Enter(msg.sender, _amount, mintAmount);
         }
     }
 
-    function leave(uint256 _shareOfFreshBeets) external {
-        if (_shareOfFreshBeets > 0) {
+    function leave(uint256 _shareOfCharredEmbr) external {
+        if (_shareOfCharredEmbr > 0) {
             uint256 totalVestedTokenSupply = vestingToken.balanceOf(
                 address(this)
             );
-            uint256 totalFreshBeets = totalSupply();
-            // Calculates the amount of vestingToken the fBeets are worth
-            uint256 amount = (_shareOfFreshBeets * totalVestedTokenSupply) /
-                totalFreshBeets;
-            _burn(msg.sender, _shareOfFreshBeets);
+            uint256 totalCharredEmbr = totalSupply();
+            // Calculates the amount of vestingToken the fEmbr are worth
+            uint256 amount = (_shareOfCharredEmbr * totalVestedTokenSupply) /
+                totalCharredEmbr;
+            _burn(msg.sender, _shareOfCharredEmbr);
             vestingToken.transfer(msg.sender, amount);
 
-            emit Leave(msg.sender, amount, _shareOfFreshBeets);
+            emit Leave(msg.sender, amount, _shareOfCharredEmbr);
         }
     }
 

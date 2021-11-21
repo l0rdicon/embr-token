@@ -1,14 +1,14 @@
 import moment from "moment"
-import { BeethovenxMasterChef, BeethovenxToken, MasterChefLpTokenTimelock } from "../types"
+import { EmbrMasterChef, EmbrToken, MasterChefLpTokenTimelock } from "../types"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { ethers } from "hardhat"
 import { advanceBlock, advanceBlockRelativeTo, advanceToTime, bn, deployChef, deployContract, deployERC20Mock } from "./utilities"
 import { expect } from "chai"
 import { BigNumber } from "ethers"
 
-describe("BeethovenxMasterChef", function () {
-  let beets: BeethovenxToken
-  let chef: BeethovenxMasterChef
+describe("EmbrMasterChef", function () {
+  let embr: EmbrToken
+  let chef: EmbrMasterChef
   let owner: SignerWithAddress
   let dev: SignerWithAddress
   let treasury: SignerWithAddress
@@ -20,7 +20,7 @@ describe("BeethovenxMasterChef", function () {
   // these are fixed values hardcoded in the contract
   // 1000 = 100 %
   const lpPercentage = 872
-  let beetsPerBlock: BigNumber = bn(6)
+  let embrPerBlock: BigNumber = bn(6)
 
   before(async function () {
     const signers = await ethers.getSigners()
@@ -34,9 +34,9 @@ describe("BeethovenxMasterChef", function () {
   })
 
   beforeEach(async function () {
-    beets = await deployContract("BeethovenxToken", [])
-    chef = await deployChef(beets.address, treasury.address, beetsPerBlock, 0)
-    await beets.transferOwnership(chef.address)
+    embr = await deployContract("EmbrToken", [])
+    chef = await deployChef(embr.address, treasury.address, embrPerBlock, 0)
+    await embr.transferOwnership(chef.address)
   })
 
   it("sets initial state correctly", async () => {
@@ -70,7 +70,7 @@ describe("BeethovenxMasterChef", function () {
   })
 
   it("deposits total balance of token to master chef pool", async () => {
-    const lpRewards = rewardsCalculator(beetsPerBlock, lpPercentage)
+    const lpRewards = rewardsCalculator(embrPerBlock, lpPercentage)
     const lp = await deployERC20Mock("LP", "LP", 10_000)
 
     await chef.add(10, lp.address, ethers.constants.AddressZero)
@@ -100,7 +100,7 @@ describe("BeethovenxMasterChef", function () {
   })
 
   it("allows harvesting of master chef rewards", async () => {
-    const lpRewards = rewardsCalculator(beetsPerBlock, lpPercentage)
+    const lpRewards = rewardsCalculator(embrPerBlock, lpPercentage)
     const lp = await deployERC20Mock("LP", "LP", 10_000)
 
     await chef.add(10, lp.address, ethers.constants.AddressZero)
@@ -125,16 +125,16 @@ describe("BeethovenxMasterChef", function () {
     await advanceBlockRelativeTo(tx, 10)
 
     const expectedRewards = lpRewards(10)
-    expect(await chef.pendingBeets(0, tokenTimelock.address)).to.equal(expectedRewards)
+    expect(await chef.pendingEmbr(0, tokenTimelock.address)).to.equal(expectedRewards)
 
     await advanceBlockRelativeTo(tx, 19)
     await tokenTimelock.harvest()
 
-    expect(await beets.balanceOf(bob.address)).to.equal(lpRewards(20))
+    expect(await embr.balanceOf(bob.address)).to.equal(lpRewards(20))
   })
 
   it("releases vested tokens deposited to master chef after release time has passed", async () => {
-    const lpRewards = rewardsCalculator(beetsPerBlock, lpPercentage)
+    const lpRewards = rewardsCalculator(embrPerBlock, lpPercentage)
 
     const lp = await deployERC20Mock("LP", "LP", 10_000)
 
@@ -168,7 +168,7 @@ describe("BeethovenxMasterChef", function () {
     // the vesting duration is set to 1 year, so lets advance to this time
     await advanceToTime(releaseTime.unix())
     await tokenTimelock.release() // we should get rewards for 10 blocks
-    expect(await beets.balanceOf(bob.address)).to.equal(lpRewards(10))
+    expect(await embr.balanceOf(bob.address)).to.equal(lpRewards(10))
     // bob should also have his LP tokens back
     expect(await lp.balanceOf(bob.address)).to.equal(lpAmount)
   })
@@ -297,9 +297,9 @@ describe("BeethovenxMasterChef", function () {
   })
 })
 
-function rewardsCalculator(beetsPerBlock: BigNumber, percentage: number) {
+function rewardsCalculator(embrPerBlock: BigNumber, percentage: number) {
   return (blocks: number) => {
-    return percentageOf(beetsPerBlock.mul(blocks), percentage)
+    return percentageOf(embrPerBlock.mul(blocks), percentage)
   }
 }
 

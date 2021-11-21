@@ -1,5 +1,5 @@
 TN:
-SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/governance/BeetsBar.sol
+SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/governance/EmbrBar.sol
 FN:26,constructor
 FN:30,enter
 FN:56,leave
@@ -151,7 +151,7 @@ end_of_record
 TN:
 SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/rewarder/TimeBasedRewarder.sol
 FN:58,constructor
-FN:74,onBeetsReward
+FN:74,onEmbrReward
 FN:99,pendingTokens
 FN:118,setRewardPerSecond
 FN:123,onlyMasterChef
@@ -164,7 +164,7 @@ FN:220,updatePool
 FNF:11
 FNH:10
 FNDA:51,constructor
-FNDA:21,onBeetsReward
+FNDA:21,onEmbrReward
 FNDA:0,pendingTokens
 FNDA:1,setRewardPerSecond
 FNDA:22,onlyMasterChef
@@ -263,12 +263,12 @@ BRF:22
 BRH:22
 end_of_record
 TN:
-SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/token/BeethovenxMasterChef.sol
+SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/token/EmbrMasterChef.sol
 FN:128,constructor
 FN:144,poolLength
 FN:153,add
 FN:205,set
-FN:232,pendingBeets
+FN:232,pendingEmbr
 FN:271,massUpdatePools
 FN:279,updatePool
 FN:321,deposit
@@ -276,7 +276,7 @@ FN:348,harvestAll
 FN:359,harvest
 FN:394,withdrawAndHarvest
 FN:443,emergencyWithdraw
-FN:460,safeBeetsTransfer
+FN:460,safeEmbrTransfer
 FN:470,treasury
 FN:475,updateEmissionRate
 FNF:15
@@ -285,7 +285,7 @@ FNDA:136,constructor
 FNDA:1,poolLength
 FNDA:43,add
 FNDA:3,set
-FNDA:9,pendingBeets
+FNDA:9,pendingEmbr
 FNDA:1,massUpdatePools
 FNDA:65,updatePool
 FNDA:33,deposit
@@ -293,7 +293,7 @@ FNDA:1,harvestAll
 FNDA:16,harvest
 FNDA:10,withdrawAndHarvest
 FNDA:1,emergencyWithdraw
-FNDA:25,safeBeetsTransfer
+FNDA:25,safeEmbrTransfer
 FNDA:1,treasury
 FNDA:2,updateEmissionRate
 DA:134,136
@@ -441,7 +441,7 @@ BRF:36
 BRH:31
 end_of_record
 TN:
-SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/token/BeethovenxToken.sol
+SF:/Users/cudba/develop/repos/crypto/sushiswap/contracts/token/EmbrToken.sol
 FN:12,mint
 FNF:1
 FNH:1

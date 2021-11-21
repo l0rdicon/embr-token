@@ -3,7 +3,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../token/BeethovenxMasterChef.sol";
+import "../token/EmbrMasterChef.sol";
 
 // based on https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.3.0/contracts/token/ERC20/utils/TokenTimelock.sol
 
@@ -33,7 +33,7 @@ contract MasterChefLpTokenTimelock {
     // timestamp when token release is enabled
     uint256 private immutable _releaseTime;
 
-    BeethovenxMasterChef private _masterChef;
+    EmbrMasterChef private _masterChef;
 
     uint256 private immutable _masterChefPoolId;
 
@@ -41,7 +41,7 @@ contract MasterChefLpTokenTimelock {
         IERC20 token_,
         address beneficiary_,
         uint256 releaseTime_,
-        BeethovenxMasterChef masterChef_,
+        EmbrMasterChef masterChef_,
         uint256 masterChefPoolId_
     ) {
         require(

@@ -1,12 +1,12 @@
 import { bn } from "../test/utilities"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
-import { BeethovenxMasterChef, BeethovenxToken } from "../types"
+import { EmbrMasterChef, EmbrToken } from "../types"
 
 export default async function ({ ethers, deployments, getNamedAccounts, network }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, dev, treasury } = await getNamedAccounts()
 
-  const masterChefDeployment = await deployments.get("BeethovenxMasterChef")
+  const masterChefDeployment = await deployments.get("EmbrMasterChef")
 
   const { address, args } = await deploy("HNDTimeBasedRewarder", {
     from: deployer,

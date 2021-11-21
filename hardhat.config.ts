@@ -61,6 +61,22 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       gasMultiplier: 30,
     },
+    fuji: {
+      chainId: 43113,
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts, // Using private key instead of mnemonic for vanity deploy
+      saveDeployments: true,
+      live: true,
+      gasMultiplier: 2,
+    },
+    avalanche: {
+      chainId: 43114,
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts, // Using private key instead of mnemonic for vanity deploy
+      saveDeployments: true,
+      live: true,
+      gasMultiplier: 2,
+    },
     // "fantom-testnet": {
     //   url: "https://rpc.testnet.fantom.network",
     //   accounts,

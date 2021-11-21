@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers"
 import { ethers, network } from "hardhat"
-import { BeethovenxMasterChef, ERC20, MasterChefLpTokenTimelock } from "../types"
+import { EmbrMasterChef, ERC20, MasterChefLpTokenTimelock } from "../types"
 import { bn } from "../test/utilities"
 
 type DistributionConfig = {
@@ -45,9 +45,9 @@ async function vestFundLps() {
 
   const [_, _a, lbpFund] = await ethers.getSigners()
 
-  const chef = (await ethers.getContractAt("BeethovenxMasterChef", config.masterChef)) as BeethovenxMasterChef
-  const beetsUsdcLp = (await ethers.getContractAt("ERC20", config.lpToken)) as ERC20
-  const balance = await beetsUsdcLp.balanceOf(lbpFund.address)
+  const chef = (await ethers.getContractAt("EmbrMasterChef", config.masterChef)) as EmbrMasterChef
+  const embrUsdcLp = (await ethers.getContractAt("ERC20", config.lpToken)) as ERC20
+  const balance = await embrUsdcLp.balanceOf(lbpFund.address)
 
   for (let distribution of config.distribution) {
     const vestingContract = (await ethers.getContractAt("MasterChefLpTokenTimelock", distribution.vestingContract)) as MasterChefLpTokenTimelock
@@ -76,7 +76,7 @@ async function vestFundLps() {
       /*
           ok we should be good to go, lets do it!
        */
-      await beetsUsdcLp.connect(lbpFund).approve(vestingContract.address, lpShareAmount)
+      await embrUsdcLp.connect(lbpFund).approve(vestingContract.address, lpShareAmount)
       const tx = await vestingContract.depositAllToMasterChef(lpShareAmount)
       const receipt = await tx.wait()
 

@@ -23,14 +23,14 @@ contract RewarderMock is IRewarder {
         BEETHOVEN_MASTERCHEF = _BEETHOVEN_MASTERCHEF;
     }
 
-    function onBeetsReward(
+    function onEmbrReward(
         uint256,
         address,
         address to,
-        uint256 beetsAmount,
+        uint256 embrAmount,
         uint256
     ) external override onlyMCV2 {
-        uint256 pendingReward = (beetsAmount * rewardMultiplier) /
+        uint256 pendingReward = (embrAmount * rewardMultiplier) /
             REWARD_TOKEN_DIVISOR;
         uint256 rewardBal = rewardToken.balanceOf(address(this));
         if (pendingReward > rewardBal) {
@@ -43,7 +43,7 @@ contract RewarderMock is IRewarder {
     function pendingTokens(
         uint256,
         address,
-        uint256 beetsAmount
+        uint256 embrAmount
     )
         external
         view
@@ -54,7 +54,7 @@ contract RewarderMock is IRewarder {
         _rewardTokens[0] = (rewardToken);
         uint256[] memory _rewardAmounts = new uint256[](1);
         _rewardAmounts[0] =
-            (beetsAmount * rewardMultiplier) /
+            (embrAmount * rewardMultiplier) /
             REWARD_TOKEN_DIVISOR;
         return (_rewardTokens, _rewardAmounts);
     }

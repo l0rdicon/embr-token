@@ -10,7 +10,7 @@ analyze:
     remappings:
         - "@openzeppelin=node_modules/@openzeppelin"
     targets:
-        - contracts/token/BeethovenxToken.sol:BeethovenxToken
-        - contracts/token/BeethovenxMasterChef.sol:BeethovenxMasterChef
+        - contracts/token/EmbrToken.sol:EmbrToken
+        - contracts/token/EmbrMasterChef.sol:EmbrMasterChef
         - contracts/governance/Timelock.sol:Timelock
         - contracts/vesting/MasterChefLpTokenTimelock.sol:MasterChefLpTokenTimelock

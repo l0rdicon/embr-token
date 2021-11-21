@@ -1,11 +1,11 @@
 import { ethers } from "hardhat"
 import { expect } from "chai"
 import { encodeParameters, latest, duration, increase, deployContract } from "./utilities"
-import { BeethovenxToken, Timelock } from "../types"
+import { EmbrToken, Timelock } from "../types"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 
 describe("Timelock", function () {
-  let beets: BeethovenxToken
+  let embr: EmbrToken
   let timelock: Timelock
 
   let owner: SignerWithAddress
@@ -26,20 +26,20 @@ describe("Timelock", function () {
   })
 
   beforeEach(async function () {
-    beets = await deployContract("BeethovenxToken", [])
+    embr = await deployContract("EmbrToken", [])
     timelock = await deployContract("Timelock", [bob.address, "259200"])
   })
 
   it("should not allow non-owner to do operation", async function () {
-    await beets.transferOwnership(timelock.address)
-    // await expectRevert(beets.transferOwnership(carol, { from: alice }), "Ownable: caller is not the owner")
+    await embr.transferOwnership(timelock.address)
+    // await expectRevert(embr.transferOwnership(carol, { from: alice }), "Ownable: caller is not the owner")
 
-    await expect(beets.transferOwnership(carol.address)).to.be.revertedWith("Ownable: caller is not the owner")
-    await expect(beets.connect(bob).transferOwnership(carol.address)).to.be.revertedWith("Ownable: caller is not the owner")
+    await expect(embr.transferOwnership(carol.address)).to.be.revertedWith("Ownable: caller is not the owner")
+    await expect(embr.connect(bob).transferOwnership(carol.address)).to.be.revertedWith("Ownable: caller is not the owner")
 
     await expect(
       timelock.queueTransaction(
-        beets.address,
+        embr.address,
         "0",
         "transferOwnership(address)",
         encodeParameters(["address"], [carol.address]),
@@ -49,38 +49,38 @@ describe("Timelock", function () {
   })
 
   it("should do the timelock thing", async function () {
-    await beets.transferOwnership(timelock.address)
+    await embr.transferOwnership(timelock.address)
     const eta = (await latest()).add(duration.days("4"))
     await timelock
       .connect(bob)
-      .queueTransaction(beets.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
+      .queueTransaction(embr.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
     await increase(duration.days("1").toNumber())
     await expect(
       timelock
         .connect(bob)
-        .executeTransaction(beets.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
+        .executeTransaction(embr.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
     ).to.be.revertedWith("Timelock::executeTransaction: Transaction hasn't surpassed time lock.")
     await increase(duration.days("4").toNumber())
     await timelock
       .connect(bob)
-      .executeTransaction(beets.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
-    expect(await beets.owner()).to.equal(carol.address)
+      .executeTransaction(embr.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
+    expect(await embr.owner()).to.equal(carol.address)
   })
 
   it("cancels queued transaction", async () => {
-    await beets.transferOwnership(timelock.address)
+    await embr.transferOwnership(timelock.address)
     const eta = (await latest()).add(duration.days("4"))
     await timelock
       .connect(bob)
-      .queueTransaction(beets.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
+      .queueTransaction(embr.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
     await increase(duration.days("1").toNumber())
     await timelock
       .connect(bob)
-      .cancelTransaction(beets.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
+      .cancelTransaction(embr.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
     await expect(
       timelock
         .connect(bob)
-        .executeTransaction(beets.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
+        .executeTransaction(embr.address, "0", "transferOwnership(address)", encodeParameters(["address"], [carol.address]), eta)
     ).to.be.revertedWith("Timelock::executeTransaction: Transaction hasn't been queued.")
   })
 

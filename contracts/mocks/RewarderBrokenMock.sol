@@ -6,7 +6,7 @@ pragma solidity 0.8.7;
 import "../interfaces/IRewarder.sol";
 
 contract RewarderBrokenMock is IRewarder {
-    function onBeetsReward(
+    function onEmbrReward(
         uint256,
         address,
         address,

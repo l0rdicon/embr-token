@@ -1,9 +1,9 @@
 {
-  "name": "beethovenx-token",
+  "name": "embr-token",
   "version": "1.0.0",
   "license": "MIT",
   "types": "./types/index.ts",
-  "description": "Core contracts for the BeethovenX token protocol",
+  "description": "Core contracts for the Embr token protocol",
   "files": [
     "abi",
     "artifacts",
@@ -15,14 +15,14 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/beethovenxfi/beethovenx-token"
+    "url": "git+https://github.com/embrfinance/embr-token"
   },
   "bugs": {
-    "url": "https://github.com/beethovenxfi/beethovenx-token/issues"
+    "url": "https://github.com/embrfinance/embr-token/issues"
   },
-  "homepage": "https://github.com/beethovenxfi/beethovenx-token#readme",
+  "homepage": "https://github.com/embrfinance/embr-token#readme",
   "keywords": [
-    "beethovenx",
+    "embr",
     "ethereum"
   ],
   "scripts": {
