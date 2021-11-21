@@ -7,11 +7,11 @@ export default async function ({ ethers, deployments, getNamedAccounts, network 
   const { deployer, dev, treasury } = await getNamedAccounts()
   const embrDeployment = await deployments.get("EmbrToken")
   const embr: EmbrToken = (await ethers.getContractAt(
-    "contracts/EmbrToken.sol:EmbrToken",
+    "contracts/token/EmbrToken.sol:EmbrToken",
     embrDeployment.address
   )) as EmbrToken
 
-  const embrPerBlock = bn(505, 16)
+  const embrPerBlock = bn(505, 15)
 
   const startBlock = process.env.DEPLOYMENT_MC_START_BLOCK
 
@@ -20,7 +20,7 @@ export default async function ({ ethers, deployments, getNamedAccounts, network 
     args: [embr.address, process.env.TREASURY_ADDRESS, embrPerBlock, startBlock],
     log: true,
     deterministicDeployment: false,
-    contract: "contracts/EmbrMasterChef.sol:EmbrMasterChef",
+    contract: "contracts/token/EmbrMasterChef.sol:EmbrMasterChef",
   })
 
   console.log("masterchef constructor args", JSON.stringify(args))

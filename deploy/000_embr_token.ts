@@ -11,10 +11,10 @@ export default async function ({ ethers, getNamedAccounts, deployments }: Hardha
     from: deployer,
     log: true,
     deterministicDeployment: false,
-    contract: "contracts/EmbrToken.sol:EmbrToken",
+    contract: "contracts/token/EmbrToken.sol:EmbrToken",
   })
 
-  const embr = (await ethers.getContractAt("contracts/EmbrToken.sol:EmbrToken", address)) as EmbrToken
+  const embr = (await ethers.getContractAt("contracts/token/EmbrToken.sol:EmbrToken", address)) as EmbrToken
 
   const partnershipFundAddress = process.env.PARTNERSHIP_FUND_ADDRESS!
   // 5% of total supply
