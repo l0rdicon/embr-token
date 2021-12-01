@@ -1,12 +1,12 @@
 import { bn, deployContract, deployERC20Mock } from "./utilities"
 import { ethers } from "hardhat"
-import { EmbrBar, IERC20 } from "../types"
+import { EmbrPit, IERC20 } from "../types"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { expect } from "chai"
 
-describe("EmbrBar", function () {
+describe("EmbrPit", function () {
   let vestingToken: IERC20
-  let embrBar: EmbrBar
+  let embrBar: EmbrPit
   let owner: SignerWithAddress
   let alice: SignerWithAddress
   let bob: SignerWithAddress
@@ -22,7 +22,7 @@ describe("EmbrBar", function () {
 
   beforeEach(async function () {
     vestingToken = await deployERC20Mock("FidelioDuetto", "FidelioDuettoBPT", bn(10_000))
-    embrBar = await deployContract("EmbrBar", [vestingToken.address])
+    embrBar = await deployContract("EmbrPit", [vestingToken.address])
   })
 
   it("sets initial state correctly", async () => {
