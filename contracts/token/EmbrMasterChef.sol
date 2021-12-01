@@ -44,7 +44,7 @@ contract EmbrMasterChef is Ownable {
     struct PoolInfo {
         // we have a fixed number of EMBR tokens released per block, each pool gets his fraction based on the allocPoint
         uint256 allocPoint; // How many allocation points assigned to this pool. the fraction EMBR to distribute per block.
-        uint256 lastRewardBlock; // Last block number that EMBR distribution occurs.
+        uint256 lastRewardTimestamp; // Last block number that EMBR distribution occurs.
         uint256 accEmbrPerShare; // Accumulated EMBR per LP share. this is multiplied by ACC_EMBR_PRECISION for more exact results (rounding errors)
     }
     // The EMBR TOKEN!
@@ -53,17 +53,17 @@ contract EmbrMasterChef is Ownable {
     // Treasury address.
     address public treasuryAddress;
 
-    // EMBR tokens created per block.
-    uint256 public embrPerBlock;
+    // EMBR tokens created per second.
+    uint256 public embrPerSec;
 
     uint256 private constant ACC_EMBR_PRECISION = 1e12;
 
     // distribution percentages: a value of 1000 = 100%
-    // 12.8% percentage of pool rewards that goes to the treasury.
-    uint256 public constant TREASURY_PERCENTAGE = 128;
+    // 10.0% percentage of pool rewards that goes to the treasury.
+    uint256 public constant TREASURY_PERCENTAGE = 100;
 
-    // 87.2% percentage of pool rewards that goes to LP holders.
-    uint256 public constant POOL_PERCENTAGE = 872;
+    // 90.0% percentage of pool rewards that goes to LP holders.
+    uint256 public constant POOL_PERCENTAGE = 900;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -80,7 +80,7 @@ contract EmbrMasterChef is Ownable {
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
     // The block number when EMBR mining starts.
-    uint256 public startBlock;
+    uint256 public startTimestamp;
 
     event Deposit(
         address indexed user,
@@ -128,17 +128,13 @@ contract EmbrMasterChef is Ownable {
     constructor(
         EmbrToken _embr,
         address _treasuryAddress,
-        uint256 _embrPerBlock,
-        uint256 _startBlock
+        uint256 _embrPerSec,
+        uint256 _startTimestamp
     ) {
-        require(
-            _embrPerBlock <= 6e18,
-            "maximum emission rate of 6 embr per block exceeded"
-        );
         embr = _embr;
         treasuryAddress = _treasuryAddress;
-        embrPerBlock = _embrPerBlock;
-        startBlock = _startBlock;
+        embrPerSec = _embrPerSec;
+        startTimestamp = _startTimestamp;
     }
 
     function poolLength() external view returns (uint256) {
@@ -167,9 +163,9 @@ contract EmbrMasterChef is Ownable {
         );
 
         // respect startBlock!
-        uint256 lastRewardBlock = block.number > startBlock
-            ? block.number
-            : startBlock;
+        uint256 lastRewardTimestamp = block.timestamp > startTimestamp
+            ? block.timestamp
+            : startTimestamp;
         totalAllocPoint = totalAllocPoint + _allocPoint;
 
         // LP tokens, rewarders & pools are always on the same index which translates into the pid
@@ -180,7 +176,7 @@ contract EmbrMasterChef is Ownable {
         poolInfo.push(
             PoolInfo({
                 allocPoint: _allocPoint,
-                lastRewardBlock: lastRewardBlock,
+                lastRewardTimestamp: lastRewardTimestamp,
                 accEmbrPerShare: 0
             })
         );
@@ -241,11 +237,11 @@ contract EmbrMasterChef is Ownable {
         // total staked lp tokens in this pool
         uint256 lpSupply = lpTokens[_pid].balanceOf(address(this));
 
-        if (block.number > pool.lastRewardBlock && lpSupply != 0) {
-            uint256 blocksSinceLastReward = block.number - pool.lastRewardBlock;
+        if (block.timestamp > pool.lastRewardTimestamp && lpSupply != 0) {
+            uint256 multiplier = block.timestamp - pool.lastRewardTimestamp;
             // based on the pool weight (allocation points) we calculate the embr rewarded for this specific pool
-            uint256 embrRewards = (blocksSinceLastReward *
-                embrPerBlock *
+            uint256 embrRewards = (multiplier *
+                embrPerSec *
                 pool.allocPoint) / totalAllocPoint;
 
             // we take parts of the rewards for treasury, these can be subject to change, so we recalculate it
@@ -278,43 +274,44 @@ contract EmbrMasterChef is Ownable {
     // Update reward variables of the given pool to be up-to-date.
     function updatePool(uint256 _pid) public returns (PoolInfo memory pool) {
         pool = poolInfo[_pid];
-
-        if (block.number > pool.lastRewardBlock) {
-            // total lp tokens staked for this pool
-            uint256 lpSupply = lpTokens[_pid].balanceOf(address(this));
-            if (lpSupply > 0) {
-                uint256 blocksSinceLastReward = block.number -
-                    pool.lastRewardBlock;
-
-                // rewards for this pool based on his allocation points
-                uint256 embrRewards = (blocksSinceLastReward *
-                    embrPerBlock *
-                    pool.allocPoint) / totalAllocPoint;
-
-                uint256 embrRewardsForPool = (embrRewards * POOL_PERCENTAGE) /
-                    1000;
-
-                embr.mint(
-                    treasuryAddress,
-                    (embrRewards * TREASURY_PERCENTAGE) / 1000
-                );
-
-                embr.mint(address(this), embrRewardsForPool);
-
-                pool.accEmbrPerShare =
-                    pool.accEmbrPerShare +
-                    ((embrRewardsForPool * ACC_EMBR_PRECISION) / lpSupply);
-            }
-            pool.lastRewardBlock = block.number;
-            poolInfo[_pid] = pool;
-
-            emit LogUpdatePool(
-                _pid,
-                pool.lastRewardBlock,
-                lpSupply,
-                pool.accEmbrPerShare
-            );
+        uint256 lpSupply = lpTokens[_pid].balanceOf(address(this));
+        
+         if (block.timestamp <= pool.lastRewardTimestamp) {
+            return pool;
         }
+        
+        if (lpSupply == 0) {
+            pool.lastRewardTimestamp = block.timestamp;
+            return pool;
+        }
+
+        uint256 multiplier = block.timestamp - pool.lastRewardTimestamp;
+        // rewards for this pool based on his allocation points
+        uint256 embrRewards = (multiplier *
+            embrPerSec *
+            pool.allocPoint) / totalAllocPoint;
+
+        uint256 embrRewardsForPool = (embrRewards * POOL_PERCENTAGE) /
+            1000;
+
+         embr.mint(
+            treasuryAddress,
+            (embrRewards * TREASURY_PERCENTAGE) / 1000
+        );
+
+        embr.mint(address(this), embrRewardsForPool);
+        pool.accEmbrPerShare =
+            pool.accEmbrPerShare +
+            ((embrRewardsForPool * ACC_EMBR_PRECISION) / lpSupply);
+        pool.lastRewardTimestamp = block.timestamp;
+
+        poolInfo[_pid] = pool;
+        emit LogUpdatePool(
+            _pid,
+            pool.lastRewardTimestamp,
+            lpSupply,
+            pool.accEmbrPerShare
+        );
     }
 
     // Deposit LP tokens to MasterChef for EMBR allocation.
@@ -326,6 +323,17 @@ contract EmbrMasterChef is Ownable {
         PoolInfo memory pool = updatePool(_pid);
         UserInfo storage user = userInfo[_pid][_to];
 
+         if (user.amount > 0) {
+            // Harvest EMBR
+            // this would  be the amount if the user joined right from the start of the farm
+            uint256 accumulatedEmbr = (user.amount * pool.accEmbrPerShare) /
+                ACC_EMBR_PRECISION;
+
+            // subtracting the rewards the user is not eligible for
+            uint256 eligibleEmbr = accumulatedEmbr - user.rewardDebt;
+            safeEmbrTransfer(msg.sender, eligibleEmbr);
+            emit Harvest(msg.sender, _pid, eligibleEmbr);
+        }
         user.amount = user.amount + _amount;
         // since we add more LP tokens, we have to keep track of the rewards he is not eligible for
         // if we would not do that, he would get rewards like he added them since the beginning of this pool
@@ -472,12 +480,8 @@ contract EmbrMasterChef is Ownable {
         emit SetTreasuryAddress(treasuryAddress, _treasuryAddress);
     }
 
-    function updateEmissionRate(uint256 _embrPerBlock) public onlyOwner {
-        require(
-            _embrPerBlock <= 6e18,
-            "maximum emission rate of 6 embr per block exceeded"
-        );
-        embrPerBlock = _embrPerBlock;
-        emit UpdateEmissionRate(msg.sender, _embrPerBlock);
+    function updateEmissionRate(uint256 _embrPerSec) public onlyOwner {
+        embrPerSec = _embrPerSec;
+        emit UpdateEmissionRate(msg.sender, _embrPerSec);
     }
 }
