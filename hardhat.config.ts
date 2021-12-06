@@ -16,7 +16,7 @@ import "solidity-coverage"
 import { HardhatUserConfig } from "hardhat/types"
 import { removeConsoleLog } from "hardhat-preprocessor"
 
-const accounts = [`0x${process.env.DEPLOYER!}`, `0x${process.env.ADMIN!}`]
+const accounts = [``, ``]
 
 const config: HardhatUserConfig = {
   abiExporter: {
@@ -27,12 +27,6 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
-  },
-  gasReporter: {
-    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    currency: "USD",
-    enabled: process.env.REPORT_GAS === "true",
-    excludeContracts: ["contracts/mocks/", "contracts/libraries/"],
   },
   mocha: {
     timeout: 20000,
@@ -110,6 +104,21 @@ const config: HardhatUserConfig = {
           },
         },
       },
+      {
+        version: "0.5.16"
+      },
+      {
+        version: "0.6.2"
+      },
+      {
+        version: "0.6.4"
+      },
+      {
+        version: "0.7.0"
+      },
+      {
+        version: "0.8.0"
+      }
     ],
   },
   spdxLicenseIdentifier: {
